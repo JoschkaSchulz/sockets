@@ -19,7 +19,7 @@ public class Controller {
 				logger.serverConnection = connection;
 				filter.loggers.add(logger);
 				connection.hostname = "localhost";
-				connection.port = 4444;
+				connection.port = 50000;
 				connection.init();
 				synchronized(pause) {
 					pause.notify();

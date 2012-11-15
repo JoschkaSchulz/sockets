@@ -1,4 +1,4 @@
-package basic.client;
+package basic.chat;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -6,28 +6,21 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map.Entry;
-
-import basic.server.IPlayer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HuebnerChat implements Runnable {
 	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
 	private BufferedReader sysin;
-	private PrintWriter sysout;
+	PrintWriter sysout;
 	
-	private String myName;
+	private Timer timer = new Timer();;
+	String myName;
 	HashMap<String, String> players = new HashMap<String, String>();
 
-	private class HuebnerSender implements Runnable {
-		public void run() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
 	public static void main(String args[]) {
 		new HuebnerChat();
 	}
@@ -51,14 +44,19 @@ public class HuebnerChat implements Runnable {
 			
 			sysout.println("Server IP?");
 
-			socket = new Socket(sysin.readLine(), 4444);
+			socket = new Socket(sysin.readLine(), 50000);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 			
 			out.println("NEW " + myName);
 			
 			new Thread(this).start();
-			
+			new Thread(new HuebnerReceiver(this)).start();
+			timer.schedule(new TimerTask() {
+				public void run() {
+					out.println("INFO");
+				}
+			}, 5000, 5000);
 			while (true) {
 				String message = in.readLine();
 				if (message.equals("OK")) {
@@ -90,6 +88,7 @@ public class HuebnerChat implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		System.exit(0);
 	}
 
 	public void run() {
@@ -105,27 +104,28 @@ public class HuebnerChat implements Runnable {
 					System.exit(0);
 				} else if (message.startsWith("/msg ")) {
 					String[] split = message.split(" ", 3);
-					split[1] = split[1].replace(' ', '_');
-					if (players.containsValue(split[1]))
-						out.println("UniMsg " + getKeyByValue(players, split[1]) + " " + split[2]);
-					else
+					if (players.containsValue(split[1])) {
+						new Thread(new HuebnerSender(this, split[2], split[1])).start();
+						sysout.println(myName.replace('_', ' ') + ": " + split[2]);
+					} else {
 						sysout.println("* " + split[1] + " gibt es nicht.");
+					}
 				} else if (message.startsWith("/nick ")) {
 					String[] split = message.split(" ", 2);
 					myName = split[1].replace(' ', '_');
 					out.println("NEW " + myName);
 				} else if (message.startsWith("/names")) {
 					for (Entry<String, String> pair : players.entrySet()) {
-				        sysout.println(pair.getValue());
+				        sysout.println(pair.getValue().replace('_', ' '));
 					}
-					sysout.println();
 				} else if (message.startsWith("//")) {
-					out.println(message.substring(1));
+					new Thread(new HuebnerSender(this, message.substring(1))).start();
+					sysout.println(myName.replace('_', ' ') + ": " + message.substring(1));
 				} else if (message.startsWith("/")) {
 					sysout.println("* Unbekannter Befehl: " + message);
 				} else {
-					out.println(message);
-					sysout.println(myName + ": " + message);
+					new Thread(new HuebnerSender(this, message)).start();
+					sysout.println(myName.replace('_', ' ') + ": " + message);
 				}
 			} catch (Exception e) {
 

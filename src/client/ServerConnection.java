@@ -17,7 +17,7 @@ public class ServerConnection {
 	public Thread waker;
 
 	public String hostname = "localhost";
-	public int port = 4444;
+	public int port = 50000;
 
 	public int playerId = -1;
 	public int gameId = -1;

@@ -8,7 +8,7 @@ public class Server extends Thread {
 	private BasicPlayerPool playerPool;
 
 	public static void main(String args[]) {
-		int port = 4444;
+		int port = 50000;
 		Server app = new Server(port);
 		app.start();
 
