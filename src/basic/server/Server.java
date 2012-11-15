@@ -5,7 +5,7 @@ import java.net.*;
 public class Server extends Thread {
 	private ServerSocket serverSocket;
 	private Socket socket;
-	private PlayerPool playerPool;
+	private BasicPlayerPool playerPool;
 
 	public static void main(String args[]) {
 		int port = 4444;
@@ -31,7 +31,7 @@ public class Server extends Thread {
 	}
 
 	public Server(int port) {
-		playerPool = new PlayerPool();
+		playerPool = new HuebnerPlayerPool();
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {

@@ -3,9 +3,9 @@ import java.net.Socket;
 
 
 public class Player extends ClientWorker implements IPlayer {
-	private PlayerPool playerPool;
+	private BasicPlayerPool playerPool;
 	
-	public Player(Socket socket, PlayerPool playerPool) {
+	public Player(Socket socket, BasicPlayerPool playerPool) {
 		super(socket);
 		this.playerPool = playerPool;
 		playerPool.newPlayer(this);
@@ -13,5 +13,8 @@ public class Player extends ClientWorker implements IPlayer {
 	protected void recvMessage(String rawPacket) {
 		playerPool.commit(this, rawPacket);
 		// System.out.println("Incoming Packet : " + rawPacket);
+	}
+	public String toString() {
+		return socket.getInetAddress().getHostName();
 	}
 }

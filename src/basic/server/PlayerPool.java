@@ -37,13 +37,13 @@ import java.util.TimerTask;
  * @author U705426
  *
  */
-public class PlayerPool {
+public class PlayerPool extends BasicPlayerPool {
 	public ArrayList<IPlayer> players = new ArrayList<IPlayer>();
-	private LogPlayer logPlayer = new LogPlayer(this);
-	private int onTurn = 0;
-	private int minPlayers = 0;
-	private int maxPlayers = 0;
-	private boolean lock;
+	LogPlayer logPlayer = new LogPlayer(this);
+	int onTurn = 0;
+	int minPlayers = 0;
+	int maxPlayers = 0;
+	boolean lock;
 
 	Timer timer = new Timer();
 
@@ -110,6 +110,21 @@ public class PlayerPool {
 		for (IPlayer aPlayer : players)
 			send(logPlayer, originate(aPlayer, "SrvNewPlayer"));
 		send(logPlayer, originate(onTurn, "SrvNextTurn"));
+	}
+	void nextTurn() {
+		send(players.get(onTurn), "SrvThankYou");
+		int skip = onTurn;
+		do {
+			onTurn++;
+			if ((maxPlayers != 0 && onTurn >= maxPlayers) || onTurn >= Math.max(minPlayers, players.size()))
+				onTurn = 0;
+			if (onTurn >= players.size() || players.get(onTurn).isOnline()) break;
+		} while (onTurn != skip);
+		if (onTurn < players.size() && !players.get(onTurn).isOnline())
+			onTurn = players.size();
+		publish(null, originate(onTurn, "SrvNextTurn"));
+		if (onTurn != players.size())
+			send(players.get(onTurn), "SrvYourTurn");
 	}
 	public void commit(IPlayer player, String message) {
 		if (message.length() > 0)
@@ -226,21 +241,6 @@ public class PlayerPool {
 		} else {
 			send(player, "SrvIllegal");
 		}
-	}
-	private void nextTurn() {
-		send(players.get(onTurn), "SrvThankYou");
-		int skip = onTurn;
-		do {
-			onTurn++;
-			if ((maxPlayers != 0 && onTurn >= maxPlayers) || onTurn >= Math.max(minPlayers, players.size()))
-				onTurn = 0;
-			if (onTurn >= players.size() || players.get(onTurn).isOnline()) break;
-		} while (onTurn != skip);
-		if (onTurn < players.size() && !players.get(onTurn).isOnline())
-			onTurn = players.size();
-		publish(null, originate(onTurn, "SrvNextTurn"));
-		if (onTurn != players.size())
-			send(players.get(onTurn), "SrvYourTurn");
 	}
 	public void publish(IPlayer player, String message) {
 		for (IPlayer aPlayer : players) {
