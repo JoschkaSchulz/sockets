@@ -32,6 +32,8 @@ public class HuebnerGUI extends JFrame {
 	private JTextPane textArea;
 	private JList<String> playerList;
 	
+	private DefaultListModel<String> listModel;
+	
 	public static SimpleAttributeSet SET_ORANGE = new SimpleAttributeSet();
 	public static SimpleAttributeSet SET_BLACK = new SimpleAttributeSet();
 
@@ -112,7 +114,7 @@ public class HuebnerGUI extends JFrame {
 		textField.setColumns(10);
 		
 		playerList = new JList<String>();
-		DefaultListModel<String> listModel = new DefaultListModel<String>();
+		listModel = new DefaultListModel<String>();
 		listModel.addElement("Bitte einloggen!");
 		playerList.setModel(listModel);
 		panel.add(playerList, BorderLayout.EAST);
@@ -126,7 +128,7 @@ public class HuebnerGUI extends JFrame {
 	}
 	
 	public void setPlayers(HashMap<String, String> players) {
-		DefaultListModel<String> listModel = new DefaultListModel<String>();
+		listModel.clear();
 		for (Map.Entry<String, String> entry : players.entrySet()) {
 			listModel.addElement(entry.getValue());
 		}
