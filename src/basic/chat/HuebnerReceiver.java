@@ -20,6 +20,7 @@ final class HuebnerReceiver implements Runnable {
 				String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
 				String[] split = message.split(": ", 2);
 				this.huebnerChat.sysout.println(split[0].replace('_', ' ') + ": " + split[1]);
+				this.huebnerChat.getGUI().appendText(split[0].replace('_', ' ') + ": " + split[1], HuebnerGUI.SET_ORANGE);
 			}
 			//clientSocket.close();
 		} catch (Exception e) {

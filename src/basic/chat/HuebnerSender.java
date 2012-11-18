@@ -33,6 +33,7 @@ class HuebnerSender implements Runnable {
 				clientSocket.send(sendPacket);
 			} catch (Exception e) {
 				this.huebnerChat.sysout.print("* Nachricht konnte nicht an " + pair.getValue() + " zugestellt werden.");
+				this.huebnerChat.getGUI().appendText("* Nachricht konnte nicht an " + pair.getValue() + " zugestellt werden.", HuebnerGUI.SET_ERROR);
 			}
 		}
 	}
