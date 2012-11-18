@@ -205,6 +205,9 @@ public class HuebnerChat implements Runnable {
 		System.exit(0);
 	}
 
+	/**
+	 * Führt das Runnable aus um die ganzen Benutzter Eingaben zu verwalten
+	 */
 	public void run() {
 		while (true) {
 			try {

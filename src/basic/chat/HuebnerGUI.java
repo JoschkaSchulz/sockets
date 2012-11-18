@@ -23,6 +23,10 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 public class HuebnerGUI extends JFrame {	
+	
+	/*
+	 * Variablen
+	 */
 	private HuebnerChat chat;
 	private String outputBuffer;
 	
@@ -34,6 +38,9 @@ public class HuebnerGUI extends JFrame {
 	
 	private DefaultListModel<String> listModel;
 	
+	/*
+	 * Static Attribute für die Chatfarben
+	 */
 	public static SimpleAttributeSet SET_ORANGE = new SimpleAttributeSet();
 	public static SimpleAttributeSet SET_BLACK = new SimpleAttributeSet();
 
@@ -51,6 +58,10 @@ public class HuebnerGUI extends JFrame {
 		StyleConstants.setBold(SET_ERROR, true);
 	}
 	
+	/**
+	 * Standardkonstrucktor
+	 * Definiert die Eigenschaften des Fensters.
+	 */
 	public HuebnerGUI() {
 		this.setUI();
 		
@@ -62,6 +73,11 @@ public class HuebnerGUI extends JFrame {
     	setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
+	/**
+	 * Startet das Fenster
+	 * 
+	 * @param ui Die GUI die geöffnet werden soll
+	 */
 	public void start(final HuebnerGUI ui) {
 		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -71,26 +87,49 @@ public class HuebnerGUI extends JFrame {
         });
 	}
 	
+	/**
+	 * Setzt die HuebnerChat Klasse
+	 * 
+	 * @param chat die Chat Klasse die für die Verbindung zuständig ist
+	 */
 	public void setHuebnerChat(HuebnerChat chat) {
 		this.chat =  chat;
 	}
 	
+	/**
+	 * Methode um den OutputBuffer zu lesen
+	 * 
+	 * @return
+	 */
 	public String getOutputBuffer() {
 		String output = this.outputBuffer;
-		this.appendText(this.outputBuffer+"\n", SET_ADMIN);
+		this.appendText(this.outputBuffer+"\n", SET_ADMIN);	//Ausgabe auf der Konsole wenn der Buffer abgefragt wird in Blau
 		this.outputBuffer = "";
 		return output;
 	}
 	
+	/**
+	 * Füllt den Output Buffer
+	 * 
+	 * @param input Das was in den OutputBuffer geschrieben werden soll
+	 */
 	public void fillOutputBuffer(String input) {
 		this.outputBuffer = input;
 	}
 	
+	/**
+	 * Fragt ab ob etwas im OutputBuffer steht
+	 * 
+	 * @return true wenn etwas im Buffer steht, sonst false
+	 */
 	public boolean isOutputBufferfilled() {
 		if(this.outputBuffer.length() > 0) return true;
 		else return false;
 	}
 	
+	/**
+	 * Erstellt die GUI und einen KeyListener für die Eingabe der Enter Taste
+	 */
 	public void setUI() {
 		panel = new JPanel(new BorderLayout());
 		
@@ -100,6 +139,8 @@ public class HuebnerGUI extends JFrame {
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
 		textField = new JTextField();
+		
+		//Fügt einen KeyListener hinzu der die Return-Taste abfragt(10), dann wird das Textfeld in den OutputBuffer geschrieben
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
@@ -127,6 +168,11 @@ public class HuebnerGUI extends JFrame {
 		this.add(panel);
 	}
 	
+	/**
+	 * Füllt die Liste der Anwesenden im Chat mit Benutzern
+	 * 
+	 * @param players Liste der Benutzter
+	 */
 	public void setPlayers(HashMap<String, String> players) {
 		listModel.clear();
 		for (Map.Entry<String, String> entry : players.entrySet()) {
@@ -135,6 +181,12 @@ public class HuebnerGUI extends JFrame {
 		playerList.setModel(listModel);
 	}
 	
+	/**
+	 * Fügt dem Chatfenster Text hinzu
+	 * 
+	 * @param text Text der hinzugefügt werden soll
+	 * @param set Formatierung des Chats
+	 */
 	public void appendText(String text, AttributeSet set) {
 		try {
 			this.textArea.getDocument().insertString(this.textArea.getDocument().getLength(), text, set);
@@ -145,6 +197,9 @@ public class HuebnerGUI extends JFrame {
 		this.setScrolbarMax();
 	}
 	
+	/**
+	 * Setzt die Scrollleiste nach ganz unten
+	 */
 	public void setScrolbarMax() {
 		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 	}
