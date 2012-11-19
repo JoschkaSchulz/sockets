@@ -2,11 +2,22 @@ package basic.server;
 import java.io.*;
 import java.net.*;
 
+/**
+ * Der Server für den Chat
+ */
 public class Server extends Thread {
+	/*
+	 * Variablen
+	 */
 	private ServerSocket serverSocket;
 	private Socket socket;
 	private BasicPlayerPool playerPool;
 
+	/**
+	 * Die main startet den Server für die Chat clienten
+	 * 
+	 * @param args Ohne Funktion
+	 */
 	public static void main(String args[]) {
 		int port = 50000;
 		Server app = new Server(port);
@@ -30,6 +41,11 @@ public class Server extends Thread {
 		System.exit(0);
 	}
 
+	/**
+	 * Erstellt einen neuen Server
+	 * 
+	 * @param port der Port auf dem der Server gestartet werden soll.
+	 */
 	public Server(int port) {
 		playerPool = new HuebnerPlayerPool();
 		try {
@@ -39,6 +55,9 @@ public class Server extends Thread {
 		}
 	}
 
+	/**
+	 * Schließt eine Verbdinung
+	 */
 	public void close() {
 		try {
 			serverSocket.close();
@@ -47,6 +66,9 @@ public class Server extends Thread {
 		}
 	}
 
+	/**
+	 * Startet das Lauschen auf neue Anfragen von Clienten.
+	 */
 	public void run() {
 		try {
 			while (true) {
